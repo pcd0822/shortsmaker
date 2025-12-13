@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Shorts Workflow Manager</title>
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;700;900&family=Rajdhani:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- JSZip -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/FileSaver.js/2.0.5/FileSaver.min.js"></script>
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="bg-noise"></div>
+    <div class="bg-grad"></div>
+
+    <div id="app">
+        <!-- Sidebar / Stepper -->
+        <aside class="sidebar">
+            <div class="logo-area">
+                <i class="fa-solid fa-bolt logo-icon"></i>
+                <h1>AI SHORTS<br><span class="subtitle">WORKFLOW MGR</span></h1>
+            </div>
+            
+            <nav class="stepper">
+                <ul>
+                    <li class="step-item active" data-step="0">
+                        <span class="step-num">00</span>
+                        <span class="step-label">Setup</span>
+                    </li>
+                    <li class="step-item" data-step="1">
+                        <span class="step-num">01</span>
+                        <span class="step-label">Source Analysis</span>
+                    </li>
+                    <li class="step-item" data-step="2">
+                        <span class="step-num">02</span>
+                        <span class="step-label">Prompt Eng.</span>
+                    </li>
+                    <li class="step-item" data-step="3">
+                        <span class="step-num">03</span>
+                        <span class="step-label">Batch Image</span>
+                    </li>
+                    <li class="step-item" data-step="4">
+                        <span class="step-num">04</span>
+                        <span class="step-label">Veo Asset Dash</span>
+                    </li>
+                    <li class="step-item" data-step="5">
+                        <span class="step-num">05</span>
+                        <span class="step-label">Audio Script</span>
+                    </li>
+                    <li class="step-item" data-step="6">
+                        <span class="step-num">06</span>
+                        <span class="step-label">Export</span>
+                    </li>
+                </ul>
+            </nav>
+
+            <div class="status-panel">
+                <div class="api-status disconnected">
+                    <i class="fa-solid fa-link-slash"></i> API Disconnected
+                </div>
+            </div>
+        </aside>
+
+        <!-- Main Content Area -->
+        <main class="main-content">
+            <header class="top-bar">
+                <h2 id="page-title">Project Setup</h2>
+                <div class="actions">
+                    <button id="btn-settings" class="icon-btn"><i class="fa-solid fa-gear"></i></button>
+                </div>
+            </header>
+
+            <div id="content-area" class="content-wrapper">
+                <!-- Dynamic View Container -->
+            </div>
+        </main>
+    </div>
+
+    <!-- Modals -->
+    <div id="api-modal" class="modal-overlay active">
+        <div class="modal-card">
+            <div class="modal-header">
+                <h3><i class="fa-brands fa-google"></i> Google AI Studio API</h3>
+            </div>
+            <div class="modal-body">
+                <p>Gemini 모델과 Imagen/Veo 연동을 위해 API Key가 필요합니다.</p>
+                <div class="input-group">
+                    <label>API Key</label>
+                    <input type="password" id="api-key-input" placeholder="Enter your AI Studio API Key">
+                    <small>Your key is stored locally in your browser.</small>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button id="btn-save-key" class="btn-primary">Connect System</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modules -->
+    <script type="module" src="js/app.js"></script>
+</body>
+</html>
