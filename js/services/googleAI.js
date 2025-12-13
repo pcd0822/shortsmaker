@@ -14,7 +14,7 @@ export const googleAI = {
     async generateText(prompt, systemInstruction = "") {
         if (!state.apiKey) throw new Error("API Key missing");
 
-        const url = `${BASE_URL}/models/gemini-1.5-flash:generateContent?key=${state.apiKey}`;
+        const url = `${BASE_URL}/models/gemini-1.5-flash-001:generateContent?key=${state.apiKey}`;
 
         const payload = {
             contents: [{
