@@ -44,13 +44,17 @@ export const init = async () => {
         CRITICAL INSTRUCTION FOR VEO & LIP-SYNC:
         If a scene involves a character speaking, the 'video_prompt' MUST include keywords like: "close up, character speaking, natural lip movement, talking face".
         
+        LANGUAGE REQUIREMENT:
+        - "description" and "dialogue" MUST be in KOREAN.
+        - "image_prompt" and "video_prompt" MUST be in ENGLISH (for better compatibility with generation models).
+
         Return a JSON Object with a "scenes" array. Each item:
         {
             "id": 1,
-            "description": "Short plot summary of the scene",
-            "image_prompt": "Highly detailed visual description for Imagen 3 (lighting, style, 9:16 aspect ratio)",
-            "video_prompt": "Motion description for Veo (camera movement, action)",
-            "dialogue": "Character dialogue (or specific sound effect)",
+            "description": "Short plot summary of the scene (Korean)",
+            "image_prompt": "Highly detailed visual description for Imagen 3 (English)",
+            "video_prompt": "Motion description for Veo (English)",
+            "dialogue": "Character dialogue (Korean)",
             "is_speaking": true/false
         }
         `;
