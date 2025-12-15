@@ -1,4 +1,5 @@
 export const state = {
+    apiKey: localStorage.getItem('openai_api_key') || null,
     currentStep: 0,
     projectParam: {
         theme: '',
@@ -11,6 +12,11 @@ export const state = {
     scenes: [], // Array of objects: { id, description, imagePrompt, videoPrompt, audioScript, imageUrl, videoStatus }
 
     // Actions
+    setApiKey(key) {
+        this.apiKey = key;
+        localStorage.setItem('openai_api_key', key);
+    },
+
     updateProjectParams(params) {
         this.projectParam = { ...this.projectParam, ...params };
     },
