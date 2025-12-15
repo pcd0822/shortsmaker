@@ -36,15 +36,42 @@ export const init = async () => {
     const summaryEl = document.getElementById('concept-summary');
     const visualEl = document.getElementById('visual-direction');
 
+    // Add Listeners (Setup first)
+    document.getElementById('btn-retry').addEventListener('click', () => {
+        // Clear state and reload to force re-analysis
+        state.setAnalysisData(null);
+        location.reload();
+    });
+
+    document.getElementById('btn-next').addEventListener('click', () => {
+        const event = new Event('next-step');
+        document.dispatchEvent(event);
+    });
+
+
+    // CHECK STATE: If we already have analysis data, show it.
+    if (state.analysisData) {
+        summaryEl.textContent = state.analysisData.summary;
+        visualEl.textContent = state.analysisData.visual_direction;
+        loader.style.display = 'none';
+        resultDiv.style.display = 'block';
+        return; // Stop here, do not run AI again
+    }
+
+
     // Auto-start analysis if not done
     /* 
        Optimized Prompt: We ask Gemini to analyze the user params and output a JSON.
     */
     const systemPrompt = `You are a professional Creative Director for YouTube Shorts. 
-    Analyze the user's request and provide a JSON response with:
+    Analyze the user's request and provide a JSON response.
+    
+    IMPORTANT: Provide the 'summary' and 'visual_direction' content in KOREAN.
+
+    JSON Structure:
     {
-        "summary": "Specific refinement of the users theme",
-        "visual_direction": "Detailed art direction description"
+        "summary": "Specific refinement of the users theme (in Korean)",
+        "visual_direction": "Detailed art direction description (in Korean)"
     }`;
 
     const userPrompt = `
@@ -62,23 +89,15 @@ export const init = async () => {
         const cleanJson = textResponse.replace(/```json/g, '').replace(/```/g, '').trim();
         const data = JSON.parse(cleanJson);
 
+        // SAVE TO STATE
+        state.setAnalysisData(data);
+
         // Display
         summaryEl.textContent = data.summary;
         visualEl.textContent = data.visual_direction;
 
         loader.style.display = 'none';
         resultDiv.style.display = 'block';
-
-        // Add Listeners
-        document.getElementById('btn-retry').addEventListener('click', () => {
-            // In real app, reset and reload. For now, just reload view.
-            location.reload();
-        });
-
-        document.getElementById('btn-next').addEventListener('click', () => {
-            const event = new Event('next-step');
-            document.dispatchEvent(event);
-        });
 
     } catch (e) {
         loader.innerHTML = `<span style="color:var(--secondary)">Error: ${e.message}</span><br><br><button onclick="location.reload()" class="btn-secondary">Try Again</button>`;
