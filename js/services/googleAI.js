@@ -1,7 +1,14 @@
+import { state } from '../state.js';
+
 const NETLIFY_FUNCTION_URL = '/.netlify/functions/openai';
 
 async function callOpenAI(payload) {
     try {
+        // Attach API Key if available in client state
+        if (state.apiKey) {
+            payload.apiKey = state.apiKey;
+        }
+
         const response = await fetch(NETLIFY_FUNCTION_URL, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
