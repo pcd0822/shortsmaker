@@ -32,6 +32,13 @@ export const init = async () => {
     const footer = document.getElementById('footer-action');
     const btnConfirm = document.getElementById('btn-confirm-prompts');
 
+    // CHECK STATE
+    if (state.scenes && state.scenes.length > 0) {
+        btnGen.style.display = 'none';
+        renderScenes(state.scenes, listEl);
+        footer.style.display = 'block';
+    }
+
     btnGen.addEventListener('click', async () => {
         btnGen.style.display = 'none';
         loader.style.display = 'block';
