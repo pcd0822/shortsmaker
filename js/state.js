@@ -8,6 +8,7 @@ export const state = {
         resolution: '1080x1920',
         style: ''
     },
+    analysisData: null,
     // Main Data Store
     scenes: [], // Array of objects: { id, description, imagePrompt, videoPrompt, audioScript, imageUrl, videoStatus }
 
@@ -21,6 +22,10 @@ export const state = {
         this.projectParam = { ...this.projectParam, ...params };
     },
 
+    setAnalysisData(data) {
+        this.analysisData = data;
+    },
+
     setScenes(scenes) {
         this.scenes = scenes;
     },
@@ -29,5 +34,18 @@ export const state = {
         if (this.scenes[index]) {
             this.scenes[index] = { ...this.scenes[index], ...data };
         }
+    },
+
+    resetState() {
+        this.currentStep = 0;
+        this.projectParam = {
+            theme: '',
+            message: '',
+            length: '',
+            resolution: '1080x1920',
+            style: ''
+        };
+        this.analysisData = null;
+        this.scenes = [];
     }
 };
