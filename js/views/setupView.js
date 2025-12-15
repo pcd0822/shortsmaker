@@ -27,16 +27,7 @@ export const html = () => `
                         </select>
                     </div>
 
-                    <div class="input-group">
-                        <label>Art Style</label>
-                        <select id="style">
-                            <option value="Cinematic Realistic">Cinematic Realism</option>
-                            <option value="3D Animation (Pixar style)">3D Animation</option>
-                            <option value="Cyberpunk Anime">Cyberpunk Anime</option>
-                            <option value="Vintage 90s">Vintage 90s</option>
-                            <option value="Dark Fantasy">Dark Fantasy</option>
-                        </select>
-                    </div>
+                    <!-- Style removed (Hardcoded to 3D Otter) -->
                 </div>
 
                 <div class="form-footer" style="display: flex; gap: 1rem;">
@@ -79,7 +70,7 @@ export const init = () => {
             theme: document.getElementById('theme').value,
             message: document.getElementById('message').value,
             length: document.getElementById('length').value,
-            style: document.getElementById('style').value,
+            style: '3D Animation (Pixar style)',
             resolution: '1080x1920'
         };
 
