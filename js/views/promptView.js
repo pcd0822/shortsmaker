@@ -47,6 +47,12 @@ export const init = async () => {
         const systemPrompt = `
         You are an expert Shorts Director.
         Based on the user's theme, generate exactly 5 distinct Scenes for a YouTube Short (${state.projectParam.length}).
+
+        MANDATORY CHARACTER (Do not change this):
+        "A cute baby otter in 3D Pixar animation style, high quality, expressive eyes, soft fur, standing on two feet, simple clean background, studio lighting".
+        
+        STYLE:
+        "High Quality 3D Animation".
         
         CRITICAL INSTRUCTION FOR VEO & LIP-SYNC:
         If a scene involves a character speaking, the 'video_prompt' MUST include keywords like: "close up, character speaking, natural lip movement, talking face".
@@ -90,6 +96,31 @@ export const init = async () => {
     });
 
     btnConfirm.addEventListener('click', () => {
+        // SCRAPE EDITED VALUES
+        const updatedScenes = [];
+        const cards = document.querySelectorAll('.scene-card');
+
+        cards.forEach(card => {
+            const id = parseInt(card.dataset.id);
+            const description = card.querySelector('.edit-description').value;
+            const imagePrompt = card.querySelector('.edit-image-prompt').value;
+            const videoPrompt = card.querySelector('.edit-video-prompt').value;
+            const dialogue = card.querySelector('.edit-dialogue')?.value || ""; // Optional
+            const isSpeaking = !!card.querySelector('.edit-dialogue'); // Check existence
+
+            updatedScenes.push({
+                id,
+                description,
+                image_prompt: imagePrompt,
+                video_prompt: videoPrompt,
+                dialogue,
+                is_speaking: isSpeaking
+            });
+        });
+
+        // UPDATE STATE
+        state.setScenes(updatedScenes);
+
         const event = new Event('next-step');
         document.dispatchEvent(event);
     });
@@ -97,20 +128,31 @@ export const init = async () => {
 
 function renderScenes(scenes, container) {
     container.innerHTML = scenes.map(scene => `
-        <div class="scene-card">
+        <div class="scene-card" data-id="${scene.id}">
             <div class="scene-header">
                 <span class="scene-id">#${scene.id}</span>
                 <span class="scene-type">${scene.is_speaking ? '<i class="fa-solid fa-comment"></i> Dialogue' : '<i class="fa-solid fa-film"></i> Action'}</span>
             </div>
             <div class="scene-body">
-                <p><strong>Plot:</strong> ${scene.description}</p>
-                <div class="prompt-box">
-                    <small>Image Prompt</small>
-                    <div class="text-truncate">${scene.image_prompt}</div>
+                <div class="input-group">
+                    <label>Plot (Korean)</label>
+                    <textarea class="edit-description" rows="2">${scene.description}</textarea>
                 </div>
-                <div class="prompt-box">
-                    <small>Veo Prompt</small>
-                    <div class="text-truncate" style="color: var(--secondary);">${scene.video_prompt}</div>
+                
+                ${scene.is_speaking ? `
+                <div class="input-group">
+                    <label>Dialogue (Korean)</label>
+                    <textarea class="edit-dialogue" rows="2" style="border-color: var(--accent);">${scene.dialogue}</textarea>
+                </div>` : ''}
+
+                <div class="input-group">
+                    <label>Image Prompt (English)</label>
+                    <textarea class="edit-image-prompt" rows="3">${scene.image_prompt}</textarea>
+                </div>
+
+                <div class="input-group">
+                    <label>Veo Prompt (English)</label>
+                    <textarea class="edit-video-prompt" rows="3" style="color:var(--text-secondary);">${scene.video_prompt}</textarea>
                 </div>
             </div>
         </div>
