@@ -5,6 +5,10 @@ const app = document.getElementById('app');
 const stepperItems = document.querySelectorAll('.step-item');
 const contentArea = document.getElementById('content-area');
 const pageTitle = document.getElementById('page-title');
+const modal = document.getElementById('api-modal');
+const apiKeyInput = document.getElementById('api-key-input');
+const btnSaveKey = document.getElementById('btn-save-key');
+const apiStatus = document.querySelector('.api-status');
 
 // View Mapping
 const views = {
@@ -21,6 +25,16 @@ const views = {
 async function init() {
     console.log('App Initializing...');
 
+    // Check API Key existence - if exists, we assume online. 
+    // If not, we show modal to ask for it.
+    if (state.apiKey) {
+        updateApiStatus(true);
+        modal.classList.remove('active');
+    } else {
+        // If no key, show modal. User can click "Connect" with empty to rely on server env.
+        modal.classList.add('active');
+    }
+
     // Load Initial View
     loadView(0);
 
@@ -29,6 +43,17 @@ async function init() {
 }
 
 function setupEventListeners() {
+    // API Modal
+    btnSaveKey.addEventListener('click', () => {
+        const key = apiKeyInput.value.trim();
+        // Allow saving empty key if user wants to use server Env
+        if (key) {
+            state.setApiKey(key);
+        }
+        modal.classList.remove('active');
+        updateApiStatus(true);
+    });
+
     // Stepper Navigation (Only allow going back or to next available step - implementation simplified for now)
     stepperItems.forEach(item => {
         item.addEventListener('click', () => {
@@ -44,6 +69,16 @@ function setupEventListeners() {
         const nextStep = state.currentStep + 1;
         if (nextStep <= 6) loadView(nextStep);
     });
+}
+
+function updateApiStatus(connected) {
+    if (connected) {
+        apiStatus.innerHTML = '<i class="fa-solid fa-link"></i> System Online';
+        apiStatus.className = 'api-status connected';
+    } else {
+        apiStatus.innerHTML = '<i class="fa-solid fa-link-slash"></i> Offline';
+        apiStatus.className = 'api-status disconnected';
+    }
 }
 
 async function loadView(stepIndex) {
