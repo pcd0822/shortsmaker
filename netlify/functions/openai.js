@@ -4,16 +4,18 @@ exports.handler = async function (event, context) {
         return { statusCode: 405, body: "Method Not Allowed" };
     }
 
-    const API_KEY = process.env.OPENAI_API_KEY;
-    if (!API_KEY) {
-        return {
-            statusCode: 500,
-            body: JSON.stringify({ error: "Server Error: OPENAI_API_KEY is not set." }),
-        };
-    }
-
     try {
-        const { type, prompt, systemInstruction } = JSON.parse(event.body);
+        const body = JSON.parse(event.body);
+        const { type, prompt, systemInstruction, apiKey: clientKey } = body;
+
+        const API_KEY = clientKey || process.env.OPENAI_API_KEY;
+
+        if (!API_KEY) {
+            return {
+                statusCode: 401,
+                body: JSON.stringify({ error: "Missing API Key. Please enter it in Settings or configure server." }),
+            };
+        }
 
         // Call OpenAI API
         if (type === 'text') {
