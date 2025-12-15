@@ -67,6 +67,10 @@ export const init = async () => {
     Analyze the user's request and provide a JSON response.
     
     IMPORTANT: Provide the 'summary' and 'visual_direction' content in KOREAN.
+    
+    CORE PROTAGONIST:
+    You MUST center the visual direction around a "Cute Baby Otter".
+    Refer to this character as: "A cute baby otter in 3D Pixar animation style, high quality, expressive eyes, soft fur, standing on two feet".
 
     JSON Structure:
     {
