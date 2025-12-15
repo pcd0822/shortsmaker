@@ -2,18 +2,71 @@ import { state } from '../state.js';
 
 const NETLIFY_FUNCTION_URL = '/.netlify/functions/openai';
 
+async function callDirectOpenAI(type, payload) {
+    if (!state.apiKey) throw new Error("No API Key available for direct call.");
+
+    let url, body;
+    const headers = {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${state.apiKey}`
+    };
+
+    if (type === 'text') {
+        url = "https://api.openai.com/v1/chat/completions";
+        body = {
+            model: "gpt-4-turbo",
+            messages: [
+                { role: "system", content: payload.systemInstruction || "You are a helpful assistant." },
+                { role: "user", content: payload.prompt }
+            ],
+            temperature: 0.7
+        };
+    } else if (type === 'image') {
+        url = "https://api.openai.com/v1/images/generations";
+        body = {
+            model: "dall-e-3",
+            prompt: payload.prompt,
+            n: 1,
+            size: "1024x1792",
+            quality: "standard"
+        };
+    }
+
+    console.log(`Fallback: Calling OpenAI Direct (${type})...`);
+    const response = await fetch(url, {
+        method: 'POST',
+        headers: headers,
+        body: JSON.stringify(body)
+    });
+
+    if (!response.ok) {
+        const err = await response.json();
+        throw new Error(err.error?.message || response.statusText);
+    }
+
+    const data = await response.json();
+
+    if (type === 'text') return data.choices[0].message.content;
+    if (type === 'image') return data.data[0].url;
+}
+
 async function callOpenAI(payload) {
+    // 1. Try Netlify Proxy
     try {
-        // Attach API Key if available in client state
-        if (state.apiKey) {
-            payload.apiKey = state.apiKey;
-        }
+        // Attach API Key if available (for proxy usage)
+        if (state.apiKey) payload.apiKey = state.apiKey;
 
         const response = await fetch(NETLIFY_FUNCTION_URL, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify(payload)
         });
+
+        // Check if response is valid JSON (Proxy alive)
+        const contentType = response.headers.get("content-type");
+        if (!contentType || !contentType.includes("application/json")) {
+            throw new Error("Proxy Endpoint Not Found (HTML received)");
+        }
 
         if (!response.ok) {
             const err = await response.json();
@@ -22,8 +75,13 @@ async function callOpenAI(payload) {
 
         const data = await response.json();
         return data.result;
+
     } catch (e) {
-        console.error("AI Service Error:", e);
+        console.warn("Proxy failed, attempting direct fallback:", e.message);
+        // 2. Fallback to Direct Call if we have a key
+        if (state.apiKey) {
+            return await callDirectOpenAI(payload.type, payload);
+        }
         throw e;
     }
 }
