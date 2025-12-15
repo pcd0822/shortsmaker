@@ -39,8 +39,11 @@ export const html = () => `
                     </div>
                 </div>
 
-                <div class="form-footer">
-                    <button type="submit" class="btn-primary">
+                <div class="form-footer" style="display: flex; gap: 1rem;">
+                    <button type="button" id="btn-reset" class="btn-secondary">
+                        <i class="fa-solid fa-rotate-left"></i> Reset Project
+                    </button>
+                    <button type="submit" class="btn-primary" style="flex: 1;">
                         Start Analysis <i class="fa-solid fa-arrow-right"></i>
                     </button>
                 </div>
@@ -55,6 +58,19 @@ export const init = () => {
     // FILL FROM STATE IF EXISTS
     if (state.projectParam.theme) document.getElementById('theme').value = state.projectParam.theme;
     if (state.projectParam.message) document.getElementById('message').value = state.projectParam.message;
+
+    // Reset Button Logic
+    const btnReset = document.getElementById('btn-reset');
+    if (btnReset) {
+        btnReset.addEventListener('click', () => {
+            if (confirm("모든 프로젝트 데이터가 초기화됩니다. 계속하시겠습니까?")) {
+                state.resetState();
+                document.getElementById('theme').value = '';
+                document.getElementById('message').value = '';
+                // Optional: clear other selects to default if needed
+            }
+        });
+    }
 
     form.addEventListener('submit', (e) => {
         e.preventDefault();
